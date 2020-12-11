@@ -8,9 +8,15 @@ const signin = (props) => {
 				<Header style={{ color: '#2196f3', marginBottom: '30px' }} as="h1">
 					<Icon name="lock" />Signin
 				</Header>
+				{props.error && (
+					<Message error>
+						<p>{props.error}</p>
+					</Message>
+				)}
 				<Form size='big' onSubmit={props.formSubmit} >
 					<Segment style={{ padding: 20 }}>
 						<Form.Input
+							focus
 							type='email'
 							placeholder="Enter Email address"
 							name="email"

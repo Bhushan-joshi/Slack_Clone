@@ -1,6 +1,7 @@
 import { Component } from 'react'
 import Register from '../../Components/Auth/Register'
 import firebase from '../../firebase';
+import md5 from 'md5';
 
 class RegisterContainer extends Component {
 	state = {
@@ -11,9 +12,8 @@ class RegisterContainer extends Component {
 			lastName: ''
 		},
 		loading: false,
-		error: null
+		error: null,
 	}
-
 	isFormValid = () => {
 		return (
 			this.state.formData.email.length > 0 ||
@@ -30,27 +30,29 @@ class RegisterContainer extends Component {
 				.auth()
 				.createUserWithEmailAndPassword(this.state.formData.email, this.state.formData.password)
 				.then(createdUser => {
-					createdUser.displayName = this.state.formData.firstName
-					console.log(createdUser);
-					this.setState({ loading: false })
+					createdUser.user.updateProfile({
+						displayName: `${this.state.formData.firstName} ${this.state.formData.lastName}`,
+						photoURL: `https://www.gravatar.com/avatar/${md5(this.state.formData.email)}?d=identicon`
+					}).then(user => {
+						this.setState({ loading: false })
+					})
 				})
 				.catch(err => {
 					console.log(err);
-					this.setState({ error: err.message })
-					this.setState({ loading: false })
+					this.setState({ loading: false, error: err.message })
 				})
 		}
 
 	}
 
-	signinWithGoogle=()=>{
-		const provider=new firebase.auth.GoogleAuthProvider();
+	signinWithGoogle = () => {
+		const provider = new firebase.auth.GoogleAuthProvider();
 		firebase
 			.auth()
 			.signInWithPopup(provider)
-			.then(user=>{
+			.then(user => {
 				console.log(user);
-			}).catch(err=>{
+			}).catch(err => {
 				console.log(err);
 			})
 	}
@@ -68,8 +70,8 @@ class RegisterContainer extends Component {
 				formSubmit={this.onSubmit}
 				loading={this.state.loading}
 				valChange={this.onValChange}
-				error={this.state.error} 
-				signinWithGoogle={this.signinWithGoogle}/>
+				error={this.state.error}
+				signinWithGoogle={this.signinWithGoogle} />
 		)
 	}
 }

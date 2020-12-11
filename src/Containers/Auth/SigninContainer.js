@@ -1,5 +1,6 @@
 import { Component } from 'react'
 import Signin from '../../Components/Auth/Signin';
+import firebase from '../../firebase';
 
 class SigninContainer extends Component {
 	state = {
@@ -8,12 +9,29 @@ class SigninContainer extends Component {
 			password: '',
 		},
 		loading: false,
-		// disable:true
+		error:null
 	}
-	onSubmit = () => {
+	isFormValid=()=>{
+		return(
+			this.state.formData.email.length>0||
+			this.state.formData.password.length>0
+		)
+	}
+	onSubmit = e=> {
 		this.setState({ loading: true })
-		alert('Register!')
-		this.setState({ loading: false })
+		if(this.isFormValid()){
+			e.preventDefault();
+			firebase
+				.auth()
+				.signInWithEmailAndPassword(this.state.formData.email,this.state.formData.password)
+				.then(user=>{
+					console.log(user);
+					this.setState({loading:false});
+				}).catch(err=>{
+					console.error(err);
+					this.setState({loading:false,error:err.message });
+				})
+		}
 	}
 	onValChange = e => {
 		const updateForm = {
@@ -27,7 +45,8 @@ class SigninContainer extends Component {
 			<Signin
 				formSubmit={this.onSubmit}
 				loading={this.state.loading}
-				valChange={this.onValChange} />
+				valChange={this.onValChange}
+				error={this.state.error} />
 		)
 	}
 }

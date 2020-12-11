@@ -57,7 +57,7 @@ const register = (props) => {
 					size="large"
 					onClick={props.signinWithGoogle}
 				>
-					<Icon name="google g" />continue with Google
+					<Icon name="google" />continue with Google
 				</Button>
 				<Message style={{ marginTop: 20, background: '#eeeeee' }}>
 					Already have an account? <Link to="/signin">Signin</Link>
