@@ -4,8 +4,10 @@ import Register from './Containers/Auth/RegisterContainer';
 import Signin from './Containers/Auth/SigninContainer';
 import { Component } from 'react';
 import firebase from './firebase';
-import { setUser } from './Store/Actions/authActions'
+import { setUser,clearUser } from './Store/Actions/authActions'
 import { connect } from 'react-redux'
+import { Spinner } from './Components/util/Spinner';
+import Panel from './Containers/Panel';
 
 class App extends Component {
   componentDidMount() {
@@ -17,14 +19,15 @@ class App extends Component {
           this.props.history.push('/')
         } else {
           this.props.history.push('/signin')
+          this.props.userClear();
         }
       })
   }
   render() {
-    return (
+    return this.props.isLoading?<Spinner/>: (
       <>
         <Switch>
-          <Route path='/' exact render={() => <h1>this is app.js</h1>} />
+          <Route path='/' exact component={Panel} />
           <Route path='/signin' component={Signin} />
           <Route path='/register' component={Register} />
         </Switch>
@@ -33,12 +36,19 @@ class App extends Component {
   }
 }
 
-const mapDispatchToProps = dispatch => {
+const mapStateToProps = state => {
   return {
-    userSet: (user) => dispatch(setUser(user))
+    isLoading: state.user.isloading,
   }
 }
-const With = withRouter(connect(null, mapDispatchToProps)(App));
+
+const mapDispatchToProps = dispatch => {
+  return {
+    userSet: (user) => dispatch(setUser(user)),
+    userClear: () => dispatch(clearUser())
+  }
+}
+const With = withRouter(connect(mapStateToProps, mapDispatchToProps)(App));
 
 const Router = () => (<BrowserRouter>
   <With />

@@ -12,7 +12,11 @@ export const authReducer=(state=initialState,action)=>{
 				currentUser:action.pyload.currentUser,
 				isloading:false
 			}
-			
+		case actionTypes.CLEAR_USER:
+			return{
+				...initialState,
+				isloading:false
+			}			
 		default:
 			return state;
 	}
