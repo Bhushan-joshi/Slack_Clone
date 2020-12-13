@@ -1,7 +1,6 @@
 import { Dropdown, Grid, Header, Icon, Image } from "semantic-ui-react"
 
 const UserPanel = props => {
-	console.log(props.user);
 	const dropDownOption = () => [
 		{
 			text: <span>Signed in as <strong>{props.user.displayName.split(" ")[0]}</strong></span>,
