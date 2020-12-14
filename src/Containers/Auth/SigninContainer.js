@@ -9,27 +9,26 @@ class SigninContainer extends Component {
 			password: '',
 		},
 		loading: false,
-		error:null
+		error: null
 	}
-	isFormValid=()=>{
-		return(
-			this.state.formData.email.length>0||
-			this.state.formData.password.length>0
+	isFormValid = () => {
+		return (
+			this.state.formData.email.length > 0 ||
+			this.state.formData.password.length > 0
 		)
 	}
-	onSubmit = e=> {
+	onSubmit = e => {
 		this.setState({ loading: true })
-		if(this.isFormValid()){
+		if (this.isFormValid()) {
 			e.preventDefault();
 			firebase
 				.auth()
-				.signInWithEmailAndPassword(this.state.formData.email,this.state.formData.password)
-				.then(user=>{
-					console.log(user);
-					this.setState({loading:false});
-				}).catch(err=>{
+				.signInWithEmailAndPassword(this.state.formData.email, this.state.formData.password)
+				.then(user => {
+					this.setState({ loading: false });
+				}).catch(err => {
 					console.error(err);
-					this.setState({loading:false,error:err.message });
+					this.setState({ loading: false, error: err.message });
 				})
 		}
 	}

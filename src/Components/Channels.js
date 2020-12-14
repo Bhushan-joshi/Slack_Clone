@@ -1,19 +1,19 @@
-import { Button, Form, Icon, Input, Menu, Modal, TextArea } from "semantic-ui-react"
+import { Button, Dimmer, Form, Icon,  Input, Loader, Menu, Modal, Segment, TextArea } from "semantic-ui-react"
 
 
 const Channels = props => {
-
 	const displayChannels = () => (
-		(props.channels.length > 0)&&( props.channels.map(channel => (
+		(props.channels.length > 0) && (props.channels.map(channel => (
 			<Menu.Item
-			key={channel.id}
-			name={channel.name}
-			style={{fontSize:'1.2rem',opacity:.7}}
-			onClick={()=>{console.log(channel);}}>
-				# {channel.name}
+				key={channel.id}
+				name={channel.name}
+				style={{ fontSize: '1.2rem', opacity: .7 }}
+				onClick={() =>props.setChannel(channel) }
+				active={props.activeChannel===channel.id}>
+				<span style={{fontSize:'1.2rem'}}>#{channel.name}</span>
 			</Menu.Item>
 		))
-	))
+		))
 
 	return (
 		<>
@@ -25,10 +25,16 @@ const Channels = props => {
 				({props.channels.length})
 				<Icon name="add circle" onClick={props.openModal} />
 				</Menu.Item>
+
 				{/* channels  list*/}
-				{displayChannels()}
+				{props.loadingChannels ? <Segment tertiary>
+					<Dimmer active>
+						<Loader indeterminate>Loading..</Loader>
+					</Dimmer>
+				</Segment> : displayChannels()}
+
 			</Menu.Menu>
-			{/* NEW CHANNEL MODAL */}
+			{/* NEW CHANNEL MODEL */}
 			<Modal open={props.modal} onClose={props.closeModal} >
 				<Modal.Header style={{ textAlign: 'center', fontSize: '2rem' }}>Add New Channel</Modal.Header>
 				<Modal.Content>

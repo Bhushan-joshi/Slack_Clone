@@ -2,6 +2,7 @@ import { Component } from "react";
 import SidepanelComponent from "../../../Components/Sidepanel";
 import firebase from '../../../firebase';
 import { connect } from "react-redux";
+import { setChannels } from "../../../Store/Actions/channelsActions";
 
 class Sidepanel extends Component {
 	state = {
@@ -11,20 +12,30 @@ class Sidepanel extends Component {
 			channelName: '',
 			channelDesc: ''
 		},
-		channelsRef: firebase.database().ref("channels")
+		channelsRef: firebase.database().ref("channels"),
+		loadingChannels: false,
+		firstLoad:true,
+		activeChannel:null
 	}
 
-	componentDidMount(){
+	componentDidMount() {
 		this.loadChannels();
 	}
+	componentWillUnmount(){
+		this.removeListeners();
+	}
+	
+	removeListeners=()=>{
+		this.state.channelsRef.off();
+	}
 
-	loadChannels=()=>{
-		const channelsArray=[];
-		this.state.channelsRef.on('child_added',snapOfData=>{
-			console.log(snapOfData.val());
-			channelsArray.push(snapOfData.val())
+	loadChannels = () => {
+		this.setState({ loadingChannels: true })
+		let channelsArray = [];
+		this.state.channelsRef.on('child_added', snapOfData => {
+			channelsArray.push(snapOfData.val());
+			this.setState({ channels: channelsArray, loadingChannels: false },()=>this.setFirstChannel())
 		})
-		this.setState({channels:channelsArray})
 	}
 
 	changeInput = e => {
@@ -93,6 +104,21 @@ class Sidepanel extends Component {
 			this.addChannel();
 		}
 	}
+	setFirstChannel=()=>{
+		const firstChannel=this.state.channels[0];
+		if (this.state.firstLoad&&this.state.channels.length>0) {
+			this.activeChannel(firstChannel)
+			this.props.setChannel(firstChannel)
+		}
+		this.setState({firstLoad:false})
+	}
+	activeChannel=channel=>{
+		this.setState({activeChannel:channel.id})
+	}
+	setChannel=(channel)=>{
+		this.activeChannel(channel)
+		this.props.setChannel(channel)
+	}
 
 	render() {
 		return (
@@ -104,7 +130,10 @@ class Sidepanel extends Component {
 				openModal={this.openModal}
 				closeModal={this.closeModal}
 				changeInput={this.changeInput}
-				submitNewForm={this.submitNewForm} />
+				submitNewForm={this.submitNewForm}
+				loadingChannels={this.state.loadingChannels}
+				setChannel={this.setChannel} 
+				activeChannel={this.state.activeChannel}/>
 		)
 	}
 }
@@ -114,5 +143,9 @@ const mapStateToProps = state => (
 		user: state.user.currentUser,
 	}
 )
-
-export default connect(mapStateToProps)(Sidepanel);
+const mapDispatchToProps=dispatch=>{
+	return{
+		setChannel:channel=>dispatch(setChannels(channel))
+	}
+}
+export default connect(mapStateToProps,mapDispatchToProps)(Sidepanel);
