@@ -1,7 +1,6 @@
 import { Button, Input, Segment } from "semantic-ui-react";
 
 const MessagesForm = props => {
-	// console.log(props);
 	return (
 		<Segment className="messages__form">
 			<Input
@@ -10,6 +9,7 @@ const MessagesForm = props => {
 				style={{ marginBottom: '.7em' }}
 				onChange={props.onMessageChange}
 				label={<Button icon="add" />}
+				value={props.message}
 				labelPosition="left"
 				placeholder="Write your Message..." />
 			<Button.Group icon widths="2">

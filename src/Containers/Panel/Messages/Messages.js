@@ -1,7 +1,6 @@
 import { Component } from "react";
 import MessagesComponent from "../../../Components/Messages";
 import firebase from '../../../firebase'
-import { connect } from "react-redux";
 
 class Messages extends Component {
 	state = {
@@ -16,8 +15,6 @@ class Messages extends Component {
 	componentDidMount() {
 		const { currentChannel, user } = this.props
 		if (user && currentChannel) {
-			console.log(user);
-			console.log(currentChannel);
 			this.addListners(currentChannel.id);
 		}
 	}
@@ -31,9 +28,8 @@ class Messages extends Component {
 		let loadedMessage = []
 		this.state.messagesRef.child(channelId).on('child_added', snap => {
 			loadedMessage.push(snap.val());
-			this.setState({ messages: loadedMessage, loadingMSGS: false })
+			this.setState({ messages: loadedMessage, loadingMSGS: false, message: '' })
 		})
-		console.log(this.state);
 	}
 
 	setMessage = () => {
@@ -82,10 +78,4 @@ class Messages extends Component {
 	}
 }
 
-const mapStateToProps = state => {
-	return {
-		user: state.user.currentUser,
-		currentChannel: state.channel.currentChannel
-	}
-}
-export default connect(mapStateToProps)(Messages);
+export default Messages;

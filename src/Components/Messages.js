@@ -2,7 +2,7 @@ import Message from "./Message";
 import MessagesForm from "./MessagesForm";
 import MessagesHeader from "./MessagesHeader";
 
-const { Segment, Comment } = require("semantic-ui-react")
+const { Segment, Comment, Dimmer, Loader } = require("semantic-ui-react")
 
 const MessagesComponent = props => {
 	
@@ -11,7 +11,9 @@ const MessagesComponent = props => {
 			<MessagesHeader />
 			<Segment>
 				<Comment.Group className="messages">
-					{ props.messages.map(message => (
+					{ props.loadingMSGS?<Dimmer active>
+						<Loader/>
+					</Dimmer> :props.messages.map(message => (
 						<Message
 							key={message.timestamp}
 							message={message}
