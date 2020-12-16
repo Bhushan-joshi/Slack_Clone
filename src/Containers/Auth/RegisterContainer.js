@@ -14,6 +14,9 @@ class RegisterContainer extends Component {
 		loading: false,
 		error: null,
 	}
+	componentDidMount(){
+		document.title="Register"
+	}
 	isFormValid = () => {
 		return (
 			this.state.formData.email.length > 0 ||

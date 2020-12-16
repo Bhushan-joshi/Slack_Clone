@@ -21,3 +21,10 @@ body,
 	right: 22em;
 	z-index: 200;
 }
+
+/* display messages */
+
+.message__self{
+	border-left: 2px solid orange;
+	padding-left: 8px;
+}

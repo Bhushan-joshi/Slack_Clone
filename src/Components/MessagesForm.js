@@ -5,7 +5,7 @@ const MessagesForm = props => {
 	return (
 		<Segment className="messages__form">
 			<Input
-				fluid
+				fluid={true}
 				name="message"
 				style={{ marginBottom: '.7em' }}
 				onChange={props.onMessageChange}
@@ -19,7 +19,7 @@ const MessagesForm = props => {
 					color="orange"
 					content="Add Reply"
 					labelPosition="left"
-					icon="edit " />
+					icon="edit" />
 
 				<Button
 					color="teal"

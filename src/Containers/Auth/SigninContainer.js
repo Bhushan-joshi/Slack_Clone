@@ -11,6 +11,9 @@ class SigninContainer extends Component {
 		loading: false,
 		error: null
 	}
+	componentDidMount(){
+		document.title="Login"
+	}
 	isFormValid = () => {
 		return (
 			this.state.formData.email.length > 0 ||

@@ -11,6 +11,7 @@ import Panel from './Containers/Panel';
 
 class App extends Component {
   componentDidMount() {
+    document.title="Slack"
     firebase
       .auth()
       .onAuthStateChanged(user => {

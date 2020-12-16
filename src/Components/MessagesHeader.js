@@ -4,7 +4,7 @@ const MessagesHeader=props=>{
 	return(
 		<Segment clearing>
 			{/* channel header */}
-			<Header fluid as="h2" floated="left" style={{marginBottom:0}}>
+			<Header fluid="true" as="h2" floated="left" style={{marginBottom:0}}>
 				<span>
 				Channel
 				<Icon name="star outline" color="black"/></span>
