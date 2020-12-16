@@ -1,5 +1,5 @@
 import { Component } from "react";
-import SidepanelComponent from "../../../Components/Sidepanel";
+import SidepanelComponent from "../../../Components/sidepanal/Sidepanel";
 import firebase from '../../../firebase';
 import { connect } from "react-redux";
 import { setChannels } from "../../../Store/Actions/channelsActions";

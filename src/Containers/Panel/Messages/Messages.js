@@ -1,5 +1,5 @@
 import { Component } from "react";
-import MessagesComponent from "../../../Components/Messages";
+import MessagesComponent from "../../../Components/messages/Messages";
 import firebase from '../../../firebase'
 
 class Messages extends Component {
