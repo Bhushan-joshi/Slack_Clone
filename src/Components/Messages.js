@@ -1,7 +1,20 @@
+import MessagesForm from "./MessagesForm";
+import MessagesHeader from "./MessagesHeader";
+
+const { Segment, Comment } = require("semantic-ui-react")
 
 const MessagesComponent=props=>{
 	return(
-		<p>Messages</p>
+		<>
+			<MessagesHeader/>
+			<Segment>
+				<Comment.Group className="messages">
+
+				</Comment.Group>
+			</Segment>
+			<MessagesForm
+			{...props}/>
+		</>
 	)
 }
 
