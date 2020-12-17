@@ -1,5 +1,6 @@
 import { Button, Input, Segment } from "semantic-ui-react";
 import FileModal from "./FileModal";
+import ProgressBar from "./ProgressBar";
 
 const MessagesForm = props => {
 	return (
@@ -15,8 +16,8 @@ const MessagesForm = props => {
 				placeholder="Write your Message..." />
 			<Button.Group icon widths="2">
 				<Button
-				onClick={props.sendMessage}
-				loading={props.msgLoading}
+					onClick={props.sendMessage}
+					loading={props.msgLoading}
 					color="orange"
 					content="Add Reply"
 					labelPosition="left"
@@ -29,10 +30,13 @@ const MessagesForm = props => {
 					labelPosition="right"
 					icon="cloud upload"
 				/>
-				<FileModal
-				{...props}
-				/>
 			</Button.Group>
+			<FileModal
+				{...props}
+			/>
+			<ProgressBar
+				{...props}
+			/>
 		</Segment>
 	)
 }
