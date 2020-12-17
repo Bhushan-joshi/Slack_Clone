@@ -1,4 +1,5 @@
 import { Button, Input, Segment } from "semantic-ui-react";
+import FileModal from "./FileModal";
 
 const MessagesForm = props => {
 	return (
@@ -23,11 +24,14 @@ const MessagesForm = props => {
 
 				<Button
 					color="teal"
+					onClick={props.openModal}
 					content="upload file"
 					labelPosition="right"
 					icon="cloud upload"
 				/>
-
+				<FileModal
+				{...props}
+				/>
 			</Button.Group>
 		</Segment>
 	)

@@ -1,6 +1,8 @@
 import { Component } from "react";
 import MessagesComponent from "../../../Components/messages/Messages";
 import firebase from '../../../firebase'
+import mime from 'mime-types'
+import { v4 as uuidv4 } from "uuid";
 
 class Messages extends Component {
 	state = {
@@ -10,14 +12,101 @@ class Messages extends Component {
 		msgError: [],
 		messages: [],
 		loadingMSGS: false,
+		modal: false,
+		file: null,
+		currentChannel: this.props.currentChannel,
+		user: this.props.user,
+		AuthorizedFile: ['image/jpeg', 'image/png', 'image/jpg'],
+		storageRef: firebase.storage().ref(),
+		uploadState: '',
+		uploadTask: null,
+		percentUploaded: 0
 	}
 
+	addFile = e => {
+		const file = e.target.files[0]
+		file && this.setState({ file: file })
+	}
+
+	sendFile = () => {
+		const { file } = this.state
+
+		if (file) {
+			if (this.isAuthFile) {
+				const metadata = { contentType: mime.lookup(file.name) }
+				this.uploadFile(file, metadata)
+				this.closeModal()
+				this.clearFile()
+			}
+		}
+	}
+
+	clearFile = () => this.setState({ file: null })
+
+	uploadFile = (file, metadata) => {
+		const pathToUpload = this.state.currentChannel.id
+		const ref = this.state.messagesRef;
+		const filePath = `chat/public/${uuidv4()}.jpg`
+
+		this.setState({
+			uploadState: 'uploading..',
+			uploadTask: this.state.storageRef.child(filePath).put(file, metadata)
+		},
+			() => {
+				this.state.uploadTask.on('state_changed', snap => {
+					const percentUploaded = Math.round((snap.bytesTransferred / snap.totalBytes) * 100)
+					this.setState({ percentUploaded })
+				},
+					err => {
+						console.log(err);
+						this.setState({
+							msgError: this.state.msgError.concat(err),
+							uploadState: 'error',
+							uploadTa: null
+						})
+					},
+					() => {
+						this.state.uploadTask.snapshot.ref.getDownloadURL().then(downloadurl => {
+							this.sendFileMessage(downloadurl, ref, pathToUpload)
+						}).catch(err => {
+							console.log(err);
+							this.setState({
+								msgError: this.state.msgError.concat(err),
+								uploadState: 'error',
+								uploadTa: null
+							})
+						})
+					})
+			}
+		)
+
+	}
+
+	sendFileMessage=(fileURL,ref,pathToUpload)=>{
+		ref.child(pathToUpload)
+		.push()
+		.set(this.setMessage(fileURL))
+		.then(()=>{
+			this.setState({uploadState:'done'})
+		})
+		.catch(err=>{
+			console.log(err);
+			this.setState({
+				msgError: this.state.msgError.concat(err),
+			})
+		})
+	}
+	isAuthFile = fileName => this.state.AuthorizedFile.includes(mime.lookup(fileName))
+
 	componentDidMount() {
-		const { currentChannel, user } = this.props
+		const { currentChannel, user } = this.state
 		if (user && currentChannel) {
 			this.addListners(currentChannel.id);
 		}
 	}
+
+	openModal = () => this.setState({ modal: true })
+	closeModal = () => this.setState({ modal: false })
 
 	addListners = (channelId) => {
 		this.addMessageListner(channelId);
@@ -32,17 +121,22 @@ class Messages extends Component {
 		})
 	}
 
-	setMessage = () => {
-		const massege = {
+	setMessage = (fileURL=null) => {
+		const message = {
 			timestamp: firebase.database.ServerValue.TIMESTAMP,
-			content: this.state.message,
 			user: {
 				id: this.props.user.uid,
 				name: this.props.user.displayName,
 				avatar: this.props.user.photoURL
 			}
 		};
-		return massege;
+
+		if (fileURL !==null) {
+			message['image']=fileURL
+		}else{
+			message['content']=this.state.message
+		}
+		return message;
 	}
 
 	sendMessage = () => {
@@ -73,7 +167,12 @@ class Messages extends Component {
 				{...this.state}
 				{...this.props}
 				onMessageChange={this.onMessageChange}
-				sendMessage={this.sendMessage} />
+				sendMessage={this.sendMessage}
+				openModal={this.openModal}
+				closeModal={this.closeModal}
+				addFile={this.addFile}
+				sendFile={this.sendFile}
+			/>
 		)
 	}
 }
