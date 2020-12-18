@@ -4,6 +4,7 @@ import firebase from '../../../firebase';
 import { connect } from "react-redux";
 import { setChannels } from "../../../Store/Actions/channelsActions";
 
+
 class Sidepanel extends Component {
 	state = {
 		channels: [],
@@ -14,19 +15,62 @@ class Sidepanel extends Component {
 		},
 		channelsRef: firebase.database().ref("channels"),
 		loadingChannels: false,
-		firstLoad:true,
-		activeChannel:null
+		firstLoad: true,
+		activeChannel: null,
+		usersRef: firebase.database().ref('users'),
+		loadedUser: [],
+		connectedRef: firebase.database().ref('.info/connected'),
+		presenceRef: firebase.database().ref('presence')
 	}
 
 	componentDidMount() {
 		this.loadChannels();
+		this.loadUsers(this.props.user.uid)
 	}
-	componentWillUnmount(){
+	componentWillUnmount() {
 		this.removeListeners();
 	}
-	
-	removeListeners=()=>{
+
+	removeListeners = () => {
 		this.state.channelsRef.off();
+	}
+
+	loadUsers = currentUser => {
+		let loadedUser = [];
+		this.state.usersRef.on('child_added', snap => {
+			if (currentUser !== snap.key) {
+				let user = snap.val();
+				user['uid'] = snap.key;
+				user['status'] = "offline"
+				loadedUser.push(user);
+				this.setState({ loadedUser })
+			}
+		})
+		this.state.connectedRef.on('value', snap => {
+			if (snap.val() === true) {
+				const ref = this.state.presenceRef.child(currentUser);
+				ref.set(true);
+				ref.onDisconnect().remove(err => {
+					err && console.log(err)
+				})
+			}
+		})
+		this.state.presenceRef.on('child_added', snap => {
+			this.addStatusToUser(snap.key)
+		})
+		this.state.presenceRef.on('child_removed', snap => {
+			this.addStatusToUser(snap.key, false)
+		})
+	}
+
+	addStatusToUser = (userId, connected = true) => {
+		const updateUser = this.state.loadedUser.reduce((acc, user) => {
+			if (user.uid === userId) {
+				user['status'] = `${connect ? 'online' : 'offline'}`
+			}
+			return acc.concat(user)
+		}, [])
+		this.setState({ loadedUser: updateUser });
 	}
 
 	loadChannels = () => {
@@ -34,7 +78,7 @@ class Sidepanel extends Component {
 		let channelsArray = [];
 		this.state.channelsRef.on('child_added', snapOfData => {
 			channelsArray.push(snapOfData.val());
-			this.setState({ channels: channelsArray, loadingChannels: false },()=>this.setFirstChannel())
+			this.setState({ channels: channelsArray, loadingChannels: false }, () => this.setFirstChannel())
 		})
 	}
 
@@ -104,18 +148,18 @@ class Sidepanel extends Component {
 			this.addChannel();
 		}
 	}
-	setFirstChannel=()=>{
-		const firstChannel=this.state.channels[0];
-		if (this.state.firstLoad&&this.state.channels.length>0) {
+	setFirstChannel = () => {
+		const firstChannel = this.state.channels[0];
+		if (this.state.firstLoad && this.state.channels.length > 0) {
 			this.activeChannel(firstChannel)
 			this.props.setChannel(firstChannel)
 		}
-		this.setState({firstLoad:false})
+		this.setState({ firstLoad: false })
 	}
-	activeChannel=channel=>{
-		this.setState({activeChannel:channel.id})
+	activeChannel = channel => {
+		this.setState({ activeChannel: channel.id })
 	}
-	setChannel=(channel)=>{
+	setChannel = (channel) => {
 		this.activeChannel(channel)
 		this.props.setChannel(channel)
 	}
@@ -123,29 +167,24 @@ class Sidepanel extends Component {
 	render() {
 		return (
 			<SidepanelComponent
+				{...this.state}
+				{...this.props}
 				signOut={this.signOut}
-				user={this.props.user}
-				channels={this.state.channels}
-				modal={this.state.modal}
 				openModal={this.openModal}
 				closeModal={this.closeModal}
 				changeInput={this.changeInput}
 				submitNewForm={this.submitNewForm}
-				loadingChannels={this.state.loadingChannels}
-				setChannel={this.setChannel} 
-				activeChannel={this.state.activeChannel}/>
+				setChannel={this.setChannel}
+			/>
 		)
 	}
 }
 
-const mapStateToProps = state => (
-	{
-		user: state.user.currentUser,
-	}
-)
+
 const mapDispatchToProps=dispatch=>{
 	return{
 		setChannel:channel=>dispatch(setChannels(channel))
 	}
 }
-export default connect(mapStateToProps,mapDispatchToProps)(Sidepanel);
+
+export default connect(null,mapDispatchToProps)(Sidepanel)

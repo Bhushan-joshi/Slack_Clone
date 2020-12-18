@@ -1,4 +1,4 @@
-import { Button, Dimmer, Form, Icon,  Input, Loader, Menu, Modal, Segment, TextArea } from "semantic-ui-react"
+import { Button, Form, Icon,  Input, Menu, Modal, TextArea } from "semantic-ui-react"
 
 
 const Channels = props => {
@@ -17,7 +17,7 @@ const Channels = props => {
 
 	return (
 		<>
-			<Menu.Menu style={{ padding: '.5em 0 2em 0' }}>
+			<Menu.Menu className="menu">
 				<Menu.Item>
 					<span>
 						<Icon name="exchange" /> CHANNELS
@@ -27,11 +27,7 @@ const Channels = props => {
 				</Menu.Item>
 
 				{/* channels  list*/}
-				{props.loadingChannels ? <Segment tertiary>
-					<Dimmer active>
-						<Loader indeterminate>Loading..</Loader>
-					</Dimmer>
-				</Segment> : displayChannels()}
+				{props.loadingChannels ? <p style={{color:'whitesmoke'}}>Loading...</p> : displayChannels()}
 
 			</Menu.Menu>
 			{/* NEW CHANNEL MODEL */}

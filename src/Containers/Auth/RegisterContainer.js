@@ -13,9 +13,10 @@ class RegisterContainer extends Component {
 		},
 		loading: false,
 		error: null,
+		usersRef: firebase.database().ref('users'),
 	}
-	componentDidMount(){
-		document.title="Register"
+	componentDidMount() {
+		document.title = "Register"
 	}
 	isFormValid = () => {
 		return (
@@ -36,8 +37,11 @@ class RegisterContainer extends Component {
 					createdUser.user.updateProfile({
 						displayName: `${this.state.formData.firstName} ${this.state.formData.lastName}`,
 						photoURL: `https://www.gravatar.com/avatar/${md5(this.state.formData.email)}?d=identicon`
-					}).then(user => {
-						this.setState({ loading: false })
+					}).then(() => {
+						this.saveCreatedUser(createdUser)
+							.then(() => {
+								this.setState({ loading: false })
+							})
 					})
 				})
 				.catch(err => {
@@ -48,6 +52,14 @@ class RegisterContainer extends Component {
 
 	}
 
+	saveCreatedUser = createdUser => {
+		return this.state.usersRef.child(createdUser.user.uid)
+			.set({
+				name: createdUser.user.displayName,
+				avatar: createdUser.user.photoURL
+			})
+	}
+
 	signinWithGoogle = () => {
 		const provider = new firebase.auth.GoogleAuthProvider();
 		firebase
@@ -55,6 +67,7 @@ class RegisterContainer extends Component {
 			.signInWithPopup(provider)
 			.then(user => {
 				console.log(user);
+				this.saveCreatedUser(user)
 			}).catch(err => {
 				console.log(err);
 			})

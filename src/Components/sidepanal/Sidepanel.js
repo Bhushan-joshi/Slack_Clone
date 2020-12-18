@@ -1,5 +1,6 @@
 import { Menu } from "semantic-ui-react";
 import Channels from "./Channels";
+import DireactMessage from "./DirectMessages";
 import UserPanel from "./Userpanel";
 
 const SidepanelComponent = props => {
@@ -16,6 +17,8 @@ const SidepanelComponent = props => {
 			<Channels
 				channels={props.channels}
 				{...props}/>
+			<DireactMessage
+			{...props}/>
 		</Menu>
 	)
 }
