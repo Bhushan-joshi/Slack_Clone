@@ -26,6 +26,7 @@ const MessagesForm = props => {
 				<Button
 					color="teal"
 					onClick={props.openModal}
+					disabled={props.uploadState==="uploading.."}
 					content="upload file"
 					labelPosition="right"
 					icon="cloud upload"

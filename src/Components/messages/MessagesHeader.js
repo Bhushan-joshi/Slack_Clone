@@ -6,13 +6,15 @@ const MessagesHeader=props=>{
 			{/* channel header */}
 			<Header fluid="true" as="h2" floated="left" style={{marginBottom:0}}>
 				<span>
-				Channel
+				{props.displayChannelName()}{" "}
 				<Icon name="star outline" color="black"/></span>
-				<Header.Subheader>2 Users</Header.Subheader>
+				<Header.Subheader>{props.numUniqueUsers}</Header.Subheader>
 			</Header>
 			{/* channel search input */}
 			<Header floated="right">
 				<Input
+				onChange={props.search}
+				loading={props.searchLoading}
 				size="mini"
 				icon="search"
 				name="searchTerm"

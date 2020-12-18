@@ -20,7 +20,11 @@ class Messages extends Component {
 		storageRef: firebase.storage().ref(),
 		uploadState: '',
 		uploadTask: null,
-		percentUploaded: 0
+		percentUploaded: 0,
+		numUniqueUsers: '',
+		searchTerm: '',
+		searchLoading: false,
+		searchResult: [],
 	}
 
 	addFile = e => {
@@ -82,19 +86,19 @@ class Messages extends Component {
 
 	}
 
-	sendFileMessage=(fileURL,ref,pathToUpload)=>{
+	sendFileMessage = (fileURL, ref, pathToUpload) => {
 		ref.child(pathToUpload)
-		.push()
-		.set(this.setMessage(fileURL))
-		.then(()=>{
-			this.setState({uploadState:'done'})
-		})
-		.catch(err=>{
-			console.log(err);
-			this.setState({
-				msgError: this.state.msgError.concat(err),
+			.push()
+			.set(this.setMessage(fileURL))
+			.then(() => {
+				this.setState({ uploadState: 'done' })
 			})
-		})
+			.catch(err => {
+				console.log(err);
+				this.setState({
+					msgError: this.state.msgError.concat(err),
+				})
+			})
 	}
 	isAuthFile = fileName => this.state.AuthorizedFile.includes(mime.lookup(fileName))
 
@@ -118,10 +122,23 @@ class Messages extends Component {
 		this.state.messagesRef.child(channelId).on('child_added', snap => {
 			loadedMessage.push(snap.val());
 			this.setState({ messages: loadedMessage, loadingMSGS: false, message: '' })
+			this.countUniqueUsers(loadedMessage);
 		})
 	}
 
-	setMessage = (fileURL=null) => {
+	countUniqueUsers = messages => {
+		const UniqueUsers = messages.reduce((acc, message) => {
+			if (!acc.includes(message.user.id)) {
+				acc.push(message.user.id);
+			}
+			return acc;
+		}, []);
+		const plural = UniqueUsers.length > 1 || UniqueUsers.length === 0;
+		const numUniqueUsers = `${UniqueUsers.length} user${plural ? "s" : ""}`;
+		this.setState({ numUniqueUsers })
+	}
+
+	setMessage = (fileURL = null) => {
 		const message = {
 			timestamp: firebase.database.ServerValue.TIMESTAMP,
 			user: {
@@ -131,10 +148,10 @@ class Messages extends Component {
 			}
 		};
 
-		if (fileURL !==null) {
-			message['image']=fileURL
-		}else{
-			message['content']=this.state.message
+		if (fileURL !== null) {
+			message['image'] = fileURL
+		} else {
+			message['content'] = this.state.message
 		}
 		return message;
 	}
@@ -157,9 +174,31 @@ class Messages extends Component {
 		}
 	}
 
+	search = (e) => {
+		this.setState({ [e.target.name]: e.target.value, searchLoading: true }, () => this.searchValue())
+	}
+
+	searchValue = () => {
+		const channelMessges = [...this.state.messages];
+		const regx = new RegExp(this.state.searchTerm, 'gi');
+		const searchResult = channelMessges.reduce((acc, message) => {
+			if (message.content && (message.content.match(regx) ||
+				message.user.name.match(regx))) {
+				acc.push(message)
+			}
+			return acc;
+		}, []);
+		this.setState({ searchResult });
+		setTimeout(() => {
+			this.setState({ searchLoading: false })
+		}, 1000);
+	}
+
 	onMessageChange = e => {
 		this.setState({ [e.target.name]: e.target.value })
 	}
+
+	displayChannelName = () => this.state.currentChannel ? `#${this.state.currentChannel.name}` : ''
 
 	render() {
 		return (
@@ -172,6 +211,8 @@ class Messages extends Component {
 				closeModal={this.closeModal}
 				addFile={this.addFile}
 				sendFile={this.sendFile}
+				displayChannelName={this.displayChannelName}
+				search={this.search}
 			/>
 		)
 	}

@@ -8,10 +8,19 @@ const MessagesComponent = props => {
 	
 	return (
 		<>
-			<MessagesHeader />
+			<MessagesHeader
+			{...props} />
 			<Segment>
 				<Comment.Group className="messages">
-					{ props.messages.map(message => (
+					{props.searchTerm? 
+						props.searchResult.map(message => (
+							<Message
+								key={message.timestamp}
+								message={message}
+								user={props.user}
+							/>
+						))
+					: props.messages.map(message => (
 						<Message
 							key={message.timestamp}
 							message={message}
