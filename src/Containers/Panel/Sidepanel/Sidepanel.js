@@ -2,7 +2,7 @@ import { Component } from "react";
 import SidepanelComponent from "../../../Components/sidepanal/Sidepanel";
 import firebase from '../../../firebase';
 import { connect } from "react-redux";
-import { setChannels } from "../../../Store/Actions/channelsActions";
+import { setChannels, setPrivateChannel } from "../../../Store/Actions/channelsActions";
 
 
 class Sidepanel extends Component {
@@ -81,7 +81,22 @@ class Sidepanel extends Component {
 			this.setState({ channels: channelsArray, loadingChannels: false }, () => this.setFirstChannel())
 		})
 	}
+	ChangeChannel = user => {
+		const ChannelId = this.getChannelId(user.uid)
+		const channelData = {
+			id: ChannelId,
+			name: user.name
+		}
+		this.props.setChannel(channelData);
+		this.props.setPrivateChannel(true);
+		this.setState({activeChannel:user.uid})
+	}
 
+	getChannelId = userId => {
+		const currentUserId = this.props.user.uid;
+		return userId < currentUserId ?
+			`${userId}/${currentUserId}` : `${currentUserId}/${userId}`
+	}
 	changeInput = e => {
 		const updatedForm = {
 			...this.state.modalForm,
@@ -175,16 +190,18 @@ class Sidepanel extends Component {
 				changeInput={this.changeInput}
 				submitNewForm={this.submitNewForm}
 				setChannel={this.setChannel}
+				ChangeChannel={this.ChangeChannel}
 			/>
 		)
 	}
 }
 
 
-const mapDispatchToProps=dispatch=>{
-	return{
-		setChannel:channel=>dispatch(setChannels(channel))
+const mapDispatchToProps = dispatch => {
+	return {
+		setChannel: channel => dispatch(setChannels(channel)), 
+		setPrivateChannel: bool => dispatch(setPrivateChannel(bool))
 	}
 }
 
-export default connect(null,mapDispatchToProps)(Sidepanel)
+export default connect(null, mapDispatchToProps)(Sidepanel)

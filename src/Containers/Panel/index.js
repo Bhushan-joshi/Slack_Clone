@@ -18,6 +18,7 @@ const Panel=props=>{
 			<Messages
 			key={props.currentChannel&&props.currentChannel.id}
 			currentChannel={props.currentChannel}
+			isPrivateChannel={props.isPrivateChannel}
 			user={props.user}/>
 			</Grid.Column>
 			<Grid.Column width={4}>
@@ -31,7 +32,8 @@ const Panel=props=>{
 const mapStateToProps = state => {
 	return {
 		user: state.user.currentUser,
-		currentChannel: state.channel.currentChannel
+		currentChannel: state.channel.currentChannel,
+		isPrivateChannel:state.channel.isPrivateChannel
 	}
 }
 

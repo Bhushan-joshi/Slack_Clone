@@ -18,8 +18,9 @@ const DireactMessage = props => {
 			{users.map(user => (
 				<Menu.Item
 					key={user.uid}
-					onClick={() => console.log(user)}
+					onClick={() => props.ChangeChannel(user)}
 					style={{ opacity: .7, fontstyle: 'italic' }}
+					active={props.activeChannel===user.uid}
 				>
 					<Icon
 						name="circle"

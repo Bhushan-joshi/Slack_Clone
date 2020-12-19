@@ -25,6 +25,8 @@ class Messages extends Component {
 		searchTerm: '',
 		searchLoading: false,
 		searchResult: [],
+		privateChannel: this.props.isPrivateChannel,
+		privateMessagesRef: firebase.database().ref('PrivateMessages')
 	}
 
 	addFile = e => {
@@ -47,10 +49,23 @@ class Messages extends Component {
 
 	clearFile = () => this.setState({ file: null })
 
+	getPath = () => {
+		if (this.state.privateChannel) {
+			return `chat/private-${this.state.currentChannel.id}`
+		} else {
+			return 'chat/public'
+		}
+	}
+
+	getMessagesRef = () => {
+		const { messagesRef, privateChannel, privateMessagesRef } = this.state
+		return privateChannel ? privateMessagesRef : messagesRef
+	}
+
 	uploadFile = (file, metadata) => {
 		const pathToUpload = this.state.currentChannel.id
-		const ref = this.state.messagesRef;
-		const filePath = `chat/public/${uuidv4()}.jpg`
+		const ref = this.getMessagesRef();
+		const filePath = `${this.getPath()}/${uuidv4()}.jpg`
 
 		this.setState({
 			uploadState: 'uploading..',
@@ -119,7 +134,8 @@ class Messages extends Component {
 	addMessageListner = channelId => {
 		this.setState({ loadingMSGS: true })
 		let loadedMessage = []
-		this.state.messagesRef.child(channelId).on('child_added', snap => {
+		const ref = this.getMessagesRef()
+		ref.child(channelId).on('child_added', snap => {
 			loadedMessage.push(snap.val());
 			this.setState({ messages: loadedMessage, loadingMSGS: false, message: '' })
 			this.countUniqueUsers(loadedMessage);
@@ -157,10 +173,10 @@ class Messages extends Component {
 	}
 
 	sendMessage = () => {
-		const { message, messagesRef } = this.state;
+		const { message } = this.state;
 		if (message) {
 			this.setState({ msgLoading: true })
-			messagesRef
+			this.getMessagesRef()
 				.child(this.props.currentChannel.id)
 				.push()
 				.set(this.setMessage())
@@ -198,8 +214,7 @@ class Messages extends Component {
 		this.setState({ [e.target.name]: e.target.value })
 	}
 
-	displayChannelName = () => this.state.currentChannel ? `#${this.state.currentChannel.name}` : ''
-
+	displayChannelName = () => this.state.currentChannel ? `${this.state.privateChannel ? '@' : '#'}${this.state.currentChannel.name}` : ''
 	render() {
 		return (
 			<MessagesComponent
