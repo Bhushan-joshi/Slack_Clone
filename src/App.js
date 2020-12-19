@@ -1,13 +1,14 @@
 import './App.css';
 import { BrowserRouter, Switch, Route, withRouter } from 'react-router-dom';
-import Register from './Containers/Auth/RegisterContainer';
-import Signin from './Containers/Auth/SigninContainer';
-import { Component } from 'react';
+import React, { Component } from 'react';
 import firebase from './firebase';
 import { setUser,clearUser } from './Store/Actions/authActions'
 import { connect } from 'react-redux'
 import { Spinner } from './Components/util/Spinner';
-import Panel from './Containers/Panel';
+
+const Panel=React.lazy(()=>import('./Containers/Panel/index'))
+const Register=React.lazy(()=>import('./Containers/Auth/RegisterContainer'))
+const Signin =React.lazy(()=>import('./Containers/Auth/SigninContainer'))
 
 class App extends Component {
   componentDidMount() {
@@ -26,13 +27,13 @@ class App extends Component {
   }
   render() {
     return this.props.isLoading?<Spinner/>: (
-      <>
+      <React.Suspense fallback="loading...">
         <Switch>
           <Route path='/' exact component={Panel} />
           <Route path='/signin' component={Signin} />
           <Route path='/register' component={Register} />
         </Switch>
-      </>
+      </React.Suspense>
     );
   }
 }
