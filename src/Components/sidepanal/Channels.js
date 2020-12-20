@@ -1,16 +1,30 @@
-import { Button, Form, Icon,  Input, Menu, Modal, TextArea } from "semantic-ui-react"
+import { Button, Form, Icon, Input, Label, Menu, Modal, TextArea } from "semantic-ui-react"
+
 
 
 const Channels = props => {
+
+	const getNotifications = channel => {
+		let count = 0;
+		props.notifecations.forEach(notification => {
+			if (notification.id===channel.id) {
+				count=notification.count
+			}
+		})
+		if (count>0) return count
+	}
 	const displayChannels = () => (
 		(props.channels.length > 0) && (props.channels.map(channel => (
 			<Menu.Item
 				key={channel.id}
 				name={channel.name}
 				style={{ fontSize: '1.2rem', opacity: .7 }}
-				onClick={() =>props.setChannel(channel) }
-				active={props.activeChannel===channel.id}>
-				<span style={{fontSize:'1.2rem'}}>#{channel.name}</span>
+				onClick={() => props.setChannel(channel)}
+				active={props.activeChannel === channel.id}>
+				{getNotifications(channel) && (
+					<Label color="red">{getNotifications(channel)}</Label>
+				)}
+				<span style={{ fontSize: '1.2rem' }}>#{channel.name}</span>
 			</Menu.Item>
 		))
 		))
@@ -27,7 +41,7 @@ const Channels = props => {
 				</Menu.Item>
 
 				{/* channels  list*/}
-				{props.loadingChannels ? <p style={{color:'whitesmoke'}}>Loading...</p> : displayChannels()}
+				{props.loadingChannels ? <p style={{ color: 'whitesmoke' }}>Loading...</p> : displayChannels()}
 
 			</Menu.Menu>
 			{/* NEW CHANNEL MODEL */}

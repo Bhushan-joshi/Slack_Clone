@@ -41,12 +41,12 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./ServiceWorkerr.js')
+        navigator.serviceWorker.register('./ServiceWorker.js')
           .then(res => console.log('Sucesss' + res.scope))
           .catch(err => console.log('failuer' + err));
       })
     }
   </script>
-  < </body>
+  </body>
 
 </html>

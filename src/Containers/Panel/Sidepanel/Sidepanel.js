@@ -20,7 +20,10 @@ class Sidepanel extends Component {
 		usersRef: firebase.database().ref('users'),
 		loadedUser: [],
 		connectedRef: firebase.database().ref('.info/connected'),
-		presenceRef: firebase.database().ref('presence')
+		presenceRef: firebase.database().ref('presence'),
+		channel: null,
+		messagesRef: firebase.database().ref('messages'),
+		notifecations: [],
 	}
 
 	componentDidMount() {
@@ -66,7 +69,7 @@ class Sidepanel extends Component {
 	addStatusToUser = (userId, connected = true) => {
 		const updateUser = this.state.loadedUser.reduce((acc, user) => {
 			if (user.uid === userId) {
-				user['status'] = `${connect ? 'online' : 'offline'}`
+				user['status'] = `${connected ? 'online' : 'offline'}`
 			}
 			return acc.concat(user)
 		}, [])
@@ -79,8 +82,41 @@ class Sidepanel extends Component {
 		this.state.channelsRef.on('child_added', snapOfData => {
 			channelsArray.push(snapOfData.val());
 			this.setState({ channels: channelsArray, loadingChannels: false }, () => this.setFirstChannel())
+			this.addNotificationsListners(snapOfData.key)
 		})
 	}
+
+	addNotificationsListners = channelId => {
+		this.state.messagesRef.child(channelId)
+			.on('value', snap => {
+				if (this.state.channel) {
+					this.handleNotifications(channelId, this.state.channel.id, this.state.notifecations, snap)
+				}
+			})
+	}
+
+	handleNotifications = (channelId, currentChannelId, notification, snap) => {
+		let lastTotal = 0;
+		let index = notification.findIndex(notifi => notifi.id === channelId);
+		if (index !== -1) {
+			if (channelId !== currentChannelId) {
+				lastTotal = notification[index].total;
+			}
+			if (snap.numChildren() - lastTotal > 0) {
+				notification[index].count = snap.numChildren() - lastTotal
+			}
+			notification[index].lastKnownTotal = snap.numChildren();
+		} else {
+			notification.push({
+				id: channelId,
+				total: snap.numChildren(),
+				lastKnownTotal: snap.numChildren(),
+				count: 0
+			})
+		}
+		this.setState({ notifecations: notification })
+	}
+
 	ChangeChannel = user => {
 		const ChannelId = this.getChannelId(user.uid)
 		const channelData = {
@@ -89,7 +125,7 @@ class Sidepanel extends Component {
 		}
 		this.props.setChannel(channelData);
 		this.props.setPrivateChannel(true);
-		this.setState({activeChannel:user.uid})
+		this.setState({ activeChannel: user.uid })
 	}
 
 	getChannelId = userId => {
@@ -168,12 +204,24 @@ class Sidepanel extends Component {
 		if (this.state.firstLoad && this.state.channels.length > 0) {
 			this.activeChannel(firstChannel)
 			this.props.setChannel(firstChannel)
+			this.setState({channel:firstChannel})
 		}
 		this.setState({ firstLoad: false })
 	}
 	activeChannel = channel => {
-		this.setState({ activeChannel: channel.id })
+		this.clearNotification();
+		this.setState({ activeChannel: channel.id, channel: channel })
 	}
+	clearNotification = () => {
+		let index=this.state.notifecations.findIndex(notifi=>notifi.id===this.state.channel.id)
+		if (index !==-1) {
+			let updatedNotifications=[...this.state.notifecations]
+			updatedNotifications[index].total=this.state.notifecations[index].lastKnownTotal
+			updatedNotifications[index].count=0;
+			this.setState({notifecations:updatedNotifications})
+		}
+	}
+
 	setChannel = (channel) => {
 		this.activeChannel(channel)
 		this.props.setChannel(channel)
@@ -199,7 +247,7 @@ class Sidepanel extends Component {
 
 const mapDispatchToProps = dispatch => {
 	return {
-		setChannel: channel => dispatch(setChannels(channel)), 
+		setChannel: channel => dispatch(setChannels(channel)),
 		setPrivateChannel: bool => dispatch(setPrivateChannel(bool))
 	}
 }
