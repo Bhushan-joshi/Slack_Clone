@@ -1,4 +1,4 @@
-import { Header, Icon, Input, Segment } from "semantic-ui-react";
+import { Header, Input, Segment } from "semantic-ui-react";
 
 const MessagesHeader = props => {
 	return (
@@ -7,7 +7,7 @@ const MessagesHeader = props => {
 			<Header fluid="true" as="h2" floated="left" style={{ marginBottom: 0 }}>
 				<span>
 					{props.displayChannelName()}{" "}
-					{!props.privateChannel && <Icon name="star outline" color="black" />}</span>
+				</span>
 				<Header.Subheader>{props.numUniqueUsers}</Header.Subheader>
 			</Header>
 			{/* channel search input */}
