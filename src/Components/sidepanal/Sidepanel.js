@@ -15,7 +15,6 @@ const SidepanelComponent = props => {
 				signOut={props.signOut}
 				user={props.user} />
 			<Channels
-				channels={props.channels}
 				{...props}/>
 			<DireactMessage
 			{...props}/>

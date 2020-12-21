@@ -6,7 +6,7 @@ const Channels = props => {
 
 	const getNotifications = channel => {
 		let count = 0;
-		props.notifecations.forEach(notification => {
+		props.notifications.forEach(notification => {
 			if (notification.id===channel.id) {
 				count=notification.count
 			}

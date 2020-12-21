@@ -23,7 +23,7 @@ class Sidepanel extends Component {
 		presenceRef: firebase.database().ref('presence'),
 		channel: null,
 		messagesRef: firebase.database().ref('messages'),
-		notifecations: [],
+		notifications: [],
 	}
 
 	componentDidMount() {
@@ -90,7 +90,7 @@ class Sidepanel extends Component {
 		this.state.messagesRef.child(channelId)
 			.on('value', snap => {
 				if (this.state.channel) {
-					this.handleNotifications(channelId, this.state.channel.id, this.state.notifecations, snap)
+					this.handleNotifications(channelId, this.state.channel.id, this.state.notifications, snap)
 				}
 			})
 	}
@@ -101,9 +101,9 @@ class Sidepanel extends Component {
 		if (index !== -1) {
 			if (channelId !== currentChannelId) {
 				lastTotal = notification[index].total;
-			}
-			if (snap.numChildren() - lastTotal > 0) {
-				notification[index].count = snap.numChildren() - lastTotal
+				if (snap.numChildren() - lastTotal > 0) {
+					notification[index].count = snap.numChildren() - lastTotal
+				}
 			}
 			notification[index].lastKnownTotal = snap.numChildren();
 		} else {
@@ -114,7 +114,7 @@ class Sidepanel extends Component {
 				count: 0
 			})
 		}
-		this.setState({ notifecations: notification })
+		this.setState({ notifications: notification })
 	}
 
 	ChangeChannel = user => {
@@ -213,12 +213,12 @@ class Sidepanel extends Component {
 		this.setState({ activeChannel: channel.id, channel: channel })
 	}
 	clearNotification = () => {
-		let index=this.state.notifecations.findIndex(notifi=>notifi.id===this.state.channel.id)
+		let index=this.state.notifications.findIndex(notifi=>notifi.id===this.state.channel.id)
 		if (index !==-1) {
-			let updatedNotifications=[...this.state.notifecations]
-			updatedNotifications[index].total=this.state.notifecations[index].lastKnownTotal
+			let updatedNotifications=[...this.state.notifications]
+			updatedNotifications[index].total=this.state.notifications[index].lastKnownTotal
 			updatedNotifications[index].count=0;
-			this.setState({notifecations:updatedNotifications})
+			this.setState({notifications:updatedNotifications})
 		}
 	}
 
