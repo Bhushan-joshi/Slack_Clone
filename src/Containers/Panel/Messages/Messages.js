@@ -3,6 +3,8 @@ import MessagesComponent from "../../../Components/messages/Messages";
 import firebase from '../../../firebase'
 import mime from 'mime-types'
 import { v4 as uuidv4 } from "uuid";
+import { connect } from "react-redux";
+import { setUsersPosts } from "../../../Store/Actions/usersPosts";
 
 class Messages extends Component {
 	state = {
@@ -139,7 +141,23 @@ class Messages extends Component {
 			loadedMessage.push(snap.val());
 			this.setState({ messages: loadedMessage, loadingMSGS: false, message: '' })
 			this.countUniqueUsers(loadedMessage);
+			this.countUsersPosts(loadedMessage)
 		})
+	}
+
+	countUsersPosts=messages=>{
+		let usersPosts=messages.reduce((acc,message)=>{
+			if (message.user.name in acc) {
+				acc[message.user.name].count +=1;	
+			}else{
+				acc[message.user.name]={
+					avatar:message.user.avatar,
+					count:1,
+				};
+			}
+			return acc;
+		},{});
+		this.props.setUserPosts(usersPosts)
 	}
 
 	countUniqueUsers = messages => {
@@ -233,4 +251,10 @@ class Messages extends Component {
 	}
 }
 
-export default Messages;
+const mapDispatchToProps=dispatch=>{
+	return{
+		setUserPosts:posts=>dispatch(setUsersPosts(posts)),
+	}
+}
+
+export default connect(null,mapDispatchToProps)(Messages);

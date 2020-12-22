@@ -1,4 +1,21 @@
-import { Accordion, Header, Icon, Image, Segment } from "semantic-ui-react";
+import { Accordion, Header, Icon, Image, List, Segment } from "semantic-ui-react";
+
+const formatCount = num => (num > 1 || num === 0) ? `${num} posts` : `${num}post`
+
+const displayPosts = posts => (
+	Object.entries(posts)
+		.sort((a, b) => b[1] - a[1])
+		.map(([key, val], i) => (
+			<List.Item key={i}>
+				<Image avatar src={val.avatar} />
+				<List.Content>
+					<List.Header>{key}</List.Header>
+					<List.Description>{formatCount(val.count)}</List.Description>
+				</List.Content>
+			</List.Item>
+		)).slice(0, 5)
+);
+
 
 const MetapanelComponent = props => {
 	if (props.isPrivateChannel) return null
@@ -7,7 +24,7 @@ const MetapanelComponent = props => {
 			<Header as="h3" attached="top">
 				<span>About {" "} <Icon name="hashtag">{props.currentChannel && props.currentChannel.name}</Icon></span>
 			</Header>
-			<Accordion styled attached>
+			<Accordion styled attached="true">
 				<Accordion.Title
 					active={props.activeIndex === 0}
 					index={0}
@@ -35,7 +52,9 @@ const MetapanelComponent = props => {
 				<Accordion.Content
 					active={props.activeIndex === 1}
 				>
-					Poster
+					<List>
+						{props.userPosts && displayPosts(props.userPosts)}
+					</List>
 				</Accordion.Content>
 				<Accordion.Title
 					active={props.activeIndex === 2}

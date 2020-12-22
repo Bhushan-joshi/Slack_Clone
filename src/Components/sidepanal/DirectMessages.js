@@ -1,11 +1,23 @@
-const { Menu, Icon } = require("semantic-ui-react")
+const { Menu, Icon, Label } = require("semantic-ui-react")
 
 
 const isUserOnline = user => {
-	return user.status === "online"?true:false}
+	return user.status === "online" ? true : false
+}
 
 
 const DireactMessage = props => {
+
+	const getNotifications = channel => {
+		let count = 0;
+		props.notifications.forEach(notification => {
+			if (notification.id === channel.id) {
+				count = notification.count
+			}
+		})
+		if (count > 0) return count
+	}
+
 	const users = props.loadedUser
 	return (
 		<Menu.Menu className="menu">
@@ -20,8 +32,11 @@ const DireactMessage = props => {
 					key={user.uid}
 					onClick={() => props.ChangeChannel(user)}
 					style={{ opacity: .7, fontstyle: 'italic' }}
-					active={props.activeChannel===user.uid}
+					active={props.activeChannel === user.uid}
 				>
+					{getNotifications(user) && (
+						<Label color="red">{getNotifications(user)}</Label>
+					)}
 					<Icon
 						name="circle"
 						color={isUserOnline(user) ? 'green' : 'red'}

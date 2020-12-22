@@ -8,8 +8,6 @@ class Metapanel extends Component {
 		currentChannel:null,
 	}
 	componentDidMount(){
-		console.log(this.state);
-		console.log(this.props);
 		this.setState({currentChannel:this.props.currentChannel})
 	}
 	setActiveIndex = (event, titleProps) => {
@@ -22,6 +20,7 @@ class Metapanel extends Component {
 		return (
 			<MetapanelComponent
 				{...this.state}
+				{...this.props}
 				setActiveIndex={this.setActiveIndex}
 			/>
 		)
