@@ -8,7 +8,10 @@ import { connect } from "react-redux";
 const Panel = props => {
 	return (
 		<Grid columns="equal" className="app" style={{ background: '#eee' }}>
-			<ColorPanel />
+			<ColorPanel 
+			key={props.currentChannel && props.currentChannel.id}
+			currentChannel={props.currentChannel}
+			user={props.user}/>
 			<Sidepanel
 				key={props.user && props.user.uid}
 				currentChannel={props.currentChannel}

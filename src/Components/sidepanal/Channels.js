@@ -70,7 +70,7 @@ const Channels = props => {
 						<Icon name="checkmark" />ADD
 					</Button>
 					<Button color="red" inverted onClick={props.closeModal}>
-						<Icon name="remove" />CANCLE
+						<Icon name="remove" />CANCEL
 					</Button>
 				</Modal.Actions>
 			</Modal>
