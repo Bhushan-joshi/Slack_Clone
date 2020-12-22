@@ -17,7 +17,7 @@ const UserPanel = props => {
 		}
 	]	
 	return (
-		<Grid style={{ background: '#4c3c4c' }}>
+		<Grid style={{ background: props.primaryColor }}>
 			<Grid.Column>
 				{/* app Header */}
 				<Grid.Row style={{ padding: '1.2em', margin: 0 }}>

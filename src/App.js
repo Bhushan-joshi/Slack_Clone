@@ -27,7 +27,7 @@ class App extends Component {
   }
   render() {
     return this.props.isLoading?<Spinner/>: (
-      <React.Suspense fallback="loading...">
+      <React.Suspense fallback={Spinner}>
         <Switch>
           <Route path='/' exact component={Panel} />
           <Route path='/signin' component={Signin} />

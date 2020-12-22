@@ -1,7 +1,21 @@
 import { Button, Divider, Icon, Label, Menu, Modal, Segment, Sidebar } from "semantic-ui-react";
 import { SliderPicker } from 'react-color';
+import { Fragment } from "react";
 
 const ColorpanelComponent = props => {
+	const displayColor = colors => (
+		colors.length > 0 && colors.map((color, i) => (
+			<Fragment key={i}>
+				<Divider />
+				<div className="color__container" onClick={() =>props.setColor(color.primary,color.secondary)}>
+					<div className="color__square" style={{ background: color.primary }}>
+						<div className="color__overlay" style={{ background: color.secondary }}>
+						</div>
+					</div>
+				</div>
+			</Fragment>
+		))
+	)
 	return (
 		<Sidebar
 			as={Menu}
@@ -12,6 +26,7 @@ const ColorpanelComponent = props => {
 			width="very thin">
 			<Divider />
 			<Button icon="add" size="small" color="blue" onClick={props.openModal} />
+			{displayColor(props.userColor)}
 			{/* Colore modal */}
 			<Modal basic open={props.modal} onClose={props.closeModal}>
 				<Modal.Header>Choose App Color</Modal.Header>

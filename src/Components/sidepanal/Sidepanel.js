@@ -10,10 +10,11 @@ const SidepanelComponent = props => {
 			inverted
 			fixed="left"
 			vertical
-			style={{ background: '#4c3c4c' }}>
+			style={{ background: props.primaryColor }}>
 			<UserPanel
 				signOut={props.signOut}
-				user={props.user} />
+				user={props.user}
+				primaryColor={props.primaryColor} />
 			<Channels
 				{...props}/>
 			<DireactMessage

@@ -7,7 +7,7 @@ import { connect } from "react-redux";
 
 const Panel = props => {
 	return (
-		<Grid columns="equal" className="app" style={{ background: '#eee' }}>
+		<Grid columns="equal" className="app" style={{ background: props.secondaryColor,padding:'1em' }}>
 			<ColorPanel 
 			key={props.currentChannel && props.currentChannel.id}
 			currentChannel={props.currentChannel}
@@ -16,6 +16,7 @@ const Panel = props => {
 				key={props.user && props.user.uid}
 				currentChannel={props.currentChannel}
 				user={props.user}
+				primaryColor={props.primaryColor}
 			/>
 			<Grid.Column style={{ marginLeft: 320 }}>
 				<Messages
@@ -42,7 +43,9 @@ const mapStateToProps = state => {
 		user: state.user.currentUser,
 		currentChannel: state.channel.currentChannel,
 		isPrivateChannel: state.channel.isPrivateChannel,
-		userPosts:state.posts.usersPosts
+		userPosts:state.posts.usersPosts,
+		primaryColor:state.color.primary,
+		secondaryColor:state.color.secondary,
 	}
 }
 
