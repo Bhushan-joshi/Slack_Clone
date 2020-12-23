@@ -5,6 +5,7 @@ import mime from 'mime-types'
 import { v4 as uuidv4 } from "uuid";
 import { connect } from "react-redux";
 import { setUsersPosts } from "../../../Store/Actions/usersPosts";
+import { emojiIndex } from "emoji-mart";
 
 class Messages extends Component {
 	state = {
@@ -28,8 +29,11 @@ class Messages extends Component {
 		searchLoading: false,
 		searchResult: [],
 		privateChannel: this.props.isPrivateChannel,
-		privateMessagesRef: firebase.database().ref('PrivateMessages')
+		privateMessagesRef: firebase.database().ref('PrivateMessages'),
+		emojiPicker:false
 	}
+
+	messageinputRef=null;
 
 	addFile = e => {
 		const file = e.target.files[0]
@@ -232,6 +236,34 @@ class Messages extends Component {
 		this.setState({ [e.target.name]: e.target.value })
 	}
 
+	tooglePicker=()=>this.setState({emojiPicker:!this.state.emojiPicker})
+
+	handelAddEmojiToMessage=emoji=>{
+		const oldMessage=this.state.message;
+		const newMessage=this.colonToUnicode(`${oldMessage} ${emoji.colons}`)
+		this.setState({message:newMessage,emojiPicker:false})
+		setTimeout(() => {
+			this.messageinputRef.focus();
+		}, 10);
+	}
+
+	colonToUnicode=message=>{
+		return message.replace(/:[A-Za-z0-9_+-]+:/g, x => {
+			x = x.replace(/:/g, "");
+			let emoji = emojiIndex.emojis[x];
+			if (typeof emoji !== "undefined") {
+			  let unicode = emoji.native;
+			  if (typeof unicode !== "undefined") {
+				return unicode;
+			  }
+			}
+			x = ":" + x + ":";
+			return x;
+		  });
+	}
+
+	focusInput=node=>this.messageinputRef=node
+
 	displayChannelName = () => this.state.currentChannel ? `${this.state.privateChannel ? '@' : '#'}${this.state.currentChannel.name}` : ''
 	render() {
 		return (
@@ -246,6 +278,9 @@ class Messages extends Component {
 				sendFile={this.sendFile}
 				displayChannelName={this.displayChannelName}
 				search={this.search}
+				tooglePicker={this.tooglePicker}
+				handelAddEmojiToMessage={this.handelAddEmojiToMessage}
+				focusInput={this.focusInput}
 			/>
 		)
 	}

@@ -58,3 +58,8 @@ body,
 	height: 35px;
 	transform: rotate(225deg);
 }
+
+/* emojipicker */
+.emojipicker{
+	position: absolute;
+}
