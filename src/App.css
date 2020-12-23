@@ -16,6 +16,7 @@ body,
 .messages{
 	height: 440px;
 	overflow-y: scroll;
+	margin-bottom: 100px;
 }
 
 .messages__form{

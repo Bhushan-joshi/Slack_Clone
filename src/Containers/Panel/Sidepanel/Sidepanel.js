@@ -24,7 +24,13 @@ class Sidepanel extends Component {
 		channel: null,
 		messagesRef: firebase.database().ref('messages'),
 		notifications: [],
+		avatarModal:false,
+		previewImage:'',
+		croppedImage:null,
+		blob:null,
 	}
+
+	avatarEditor=null;
 
 	componentDidMount() {
 		this.loadChannels();
@@ -227,6 +233,38 @@ class Sidepanel extends Component {
 		this.props.setChannel(channel)
 	}
 
+	openAvatarModal=()=>this.setState({avatarModal:true})
+	closeAvatarModal=()=>this.setState({avatarModal:false})
+
+	handleAvatarReader=e=>{
+		const file=e.target.files[0];
+		const reader=new FileReader();
+		if (file) {
+			reader.readAsDataURL(file);
+			reader.addEventListener('load',()=>{
+				this.setState({previewImage:reader.result});
+			})
+		}
+	}
+
+	handleCropImage=()=>{
+		if (this.avatarEditor) {
+			this.avatarEditor.getImageScaledToCanvas().toBlob(blob=>{
+				let imageURL=URL.createObjectURL(blob)
+				this.setState({
+					croppedImage:imageURL,
+					blob
+				})
+			})
+		}
+	}
+
+	changeAvatar=()=>{
+
+	}
+
+	setAvatarEditor=node=>this.avatarEditor=node
+
 	render() {
 		return (
 			<SidepanelComponent
@@ -239,6 +277,12 @@ class Sidepanel extends Component {
 				submitNewForm={this.submitNewForm}
 				setChannel={this.setChannel}
 				ChangeChannel={this.ChangeChannel}
+				openAvatarModal={this.openAvatarModal}
+				closeAvatarModal={this.closeAvatarModal}
+				handleAvatarReader={this.handleAvatarReader}
+				handleCropImage={this.handleCropImage}
+				setAvatarEditor={this.setAvatarEditor}
+				changeAvatar={this.changeAvatar}
 			/>
 		)
 	}
