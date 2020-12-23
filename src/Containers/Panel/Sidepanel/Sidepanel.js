@@ -28,6 +28,9 @@ class Sidepanel extends Component {
 		previewImage:'',
 		croppedImage:null,
 		blob:null,
+		storageRef:firebase.storage().ref(),
+		user:firebase.auth().currentUser,
+		uploadedCroppedImage:null,
 	}
 
 	avatarEditor=null;
@@ -260,7 +263,42 @@ class Sidepanel extends Component {
 	}
 
 	changeAvatar=()=>{
+		const metadata={
+			contentType:'image/jpeg'
+		}
+		const {storageRef,user,blob}=this.state
+		storageRef
+		.child(`avatars/user-${user.uid}`)
+		.put(blob,metadata)
+		.then(snap=>{
+			snap.ref.getDownloadURL()
+			.then(downloadURL=>{
+				this.setState({uploadedCroppedImage:downloadURL},()=>this.changeAvatarURL())
+			})
+		})
+	}
 
+	changeAvatarURL=()=>{
+		this.state.user
+		.updateProfile({
+			photoURL:this.state.uploadedCroppedImage
+		})
+		.then(()=>{
+			console.log('changed avatar');
+			this.closeAvatarModal();
+		})
+		.catch(err=>{
+			console.log(err);
+		})
+		this.state.usersRef
+		.child(this.state.user.uid)
+		.update({avatar:this.state.uploadedCroppedImage})
+		.then(()=>{
+			console.log('changed image');
+		})
+		.catch(err=>{
+			console.log(err);
+		})
 	}
 
 	setAvatarEditor=node=>this.avatarEditor=node
