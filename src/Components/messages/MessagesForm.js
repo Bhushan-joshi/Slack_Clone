@@ -27,11 +27,12 @@ const MessagesForm = props => {
 				icon={props.emojiPicker?'close':'add'}
 				content={props.emojiPicker?'Close':null} 
 				onClick={props.tooglePicker} 
-
 				/>}
 				value={props.message}
 				labelPosition="left"
-				placeholder="Write your Message..." />
+				placeholder="Write your Message..." 
+				autoComplete="off"
+				type="text"/>
 			<Button.Group icon widths="2">
 				<Button
 					onClick={props.sendMessage}

@@ -39,13 +39,7 @@ class Sidepanel extends Component {
 		this.loadChannels();
 		this.loadUsers(this.props.user.uid)
 	}
-	componentWillUnmount() {
-		this.removeListeners();
-	}
-
-	removeListeners = () => {
-		this.state.channelsRef.off();
-	}
+	
 
 	loadUsers = currentUser => {
 		let loadedUser = [];

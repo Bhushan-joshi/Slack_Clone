@@ -14,7 +14,7 @@ body,
 /* messages */
 
 .messages{
-	height: 440px;
+	height: 380px;
 	overflow-y: scroll;
 	margin-bottom: 100px;
 }

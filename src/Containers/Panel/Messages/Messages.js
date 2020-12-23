@@ -34,6 +34,17 @@ class Messages extends Component {
 	}
 
 	messageinputRef=null;
+	msgRef=null;
+
+	componentDidUpdate(prevProps,prevState){
+		if (this.msgRef) {
+			this.scrollToBottom();
+		}
+	}
+
+	scrollToBottom=()=>{
+		this.msgRef.scrollIntoView({behavior:'smooth'})
+	}
 
 	addFile = e => {
 		const file = e.target.files[0]
@@ -264,6 +275,8 @@ class Messages extends Component {
 
 	focusInput=node=>this.messageinputRef=node
 
+	msgEnd=node=>this.msgRef=node
+
 	displayChannelName = () => this.state.currentChannel ? `${this.state.privateChannel ? '@' : '#'}${this.state.currentChannel.name}` : ''
 	render() {
 		return (
@@ -281,6 +294,7 @@ class Messages extends Component {
 				tooglePicker={this.tooglePicker}
 				handelAddEmojiToMessage={this.handelAddEmojiToMessage}
 				focusInput={this.focusInput}
+				msgEnd={this.msgEnd}
 			/>
 		)
 	}

@@ -27,6 +27,7 @@ const MessagesComponent = props => {
 							user={props.user}
 						/>
 					))}
+					<div ref={node=>props.msgEnd(node)}></div>
 				</Comment.Group>
 			</Segment>
 			<MessagesForm
