@@ -63,3 +63,69 @@ body,
 .emojipicker{
 	position: absolute;
 }
+
+
+/* Skeleton.js */
+.skeleton{
+	position: relative;
+	height: 40px;
+	overflow: hidden;
+	margin-bottom: 10px;
+}
+
+.skeleton::after{
+	content: '';
+	display:block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 50%;
+	height: 100%;
+	animation: sweep 2s infinite;
+	background-image: linear-gradient(
+		to left,
+		transparent,
+		rgba(255, 255, 255, .4),
+		transparent,
+	);
+}
+
+@keyframes sweep{
+	0% {
+		transform: translateX(-100%);
+	}
+	50% {
+		transform: translateX(150%);
+	}
+	100%{
+		transform: translateX(-100%);
+	}
+}
+
+.skeleton__avatar{
+	width: 35px;
+	height: 35px;
+	border-radius: 3px;
+	background-color: rgba(58,57,57,.3);
+}
+
+.skeleton__author{
+	background-color: rgba(58,57,57,.3);
+	width: 120px;
+	height: 10px;
+	border-radius: 3px;
+	position: absolute;
+	bottom: 30px;
+	left: 40px;
+	right: 0;
+}
+
+.skeleton__details{
+	background-color: rgba(58,57,57,.3);
+	height: 20px;
+	border-radius: 3px;
+	position: absolute;
+	bottom: 5px;
+	left: 40px;
+	right: 20px;
+}

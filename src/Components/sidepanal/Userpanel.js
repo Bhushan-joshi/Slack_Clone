@@ -1,5 +1,6 @@
 import { Button, Dropdown, Grid, Header, Icon, Image, Input, Modal } from "semantic-ui-react"
 import AvatarEditor from "react-avatar-editor";
+import logo from '../../assets/index.svg'
 
 const UserPanel = props => {
 	const dropDownOption = () => [
@@ -23,7 +24,7 @@ const UserPanel = props => {
 				{/* app Header */}
 				<Grid.Row style={{ padding: '1.2em', margin: 0 }}>
 					<Header inverted floated="left" as="h2">
-						<Icon name="slack" color="teal" />
+						<Image src={logo} style={{height:50,width:50}}/>
 						<Header.Content>Slack</Header.Content>
 					</Header>
 					{/* User Dropdown ,textAlign:'center' */}

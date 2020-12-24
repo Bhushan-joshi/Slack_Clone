@@ -1,8 +1,18 @@
 import Message from "./Message";
 import MessagesForm from "./MessagesForm";
 import MessagesHeader from "./MessagesHeader";
+import { Segment, Comment } from "semantic-ui-react"
+import { Skeleton } from "../util/Skeleton";
 
-const { Segment, Comment } = require("semantic-ui-react")
+const displaySkaleton=(loading)=>(
+	loading?(
+		<>
+			{[...Array(7)].map((_,i)=>(
+				<Skeleton key={i} />
+			))}
+		</>
+	):null
+)
 
 const MessagesComponent = props => {
 	
@@ -12,6 +22,7 @@ const MessagesComponent = props => {
 			{...props} />
 			<Segment>
 				<Comment.Group className="messages">
+					{displaySkaleton(props.loadingMSGS)}
 					{props.searchTerm? 
 						props.searchResult.map(message => (
 							<Message
