@@ -30,20 +30,20 @@ class Messages extends Component {
 		searchResult: [],
 		privateChannel: this.props.isPrivateChannel,
 		privateMessagesRef: firebase.database().ref('PrivateMessages'),
-		emojiPicker:false
+		emojiPicker: false
 	}
 
-	messageinputRef=null;
-	msgRef=null;
+	messageinputRef = null;
+	msgRef = null;
 
-	componentDidUpdate(prevProps,prevState){
+	componentDidUpdate(prevProps, prevState) {
 		if (this.msgRef) {
 			this.scrollToBottom();
 		}
 	}
 
-	scrollToBottom=()=>{
-		this.msgRef.scrollIntoView({behavior:'smooth'})
+	scrollToBottom = () => {
+		this.msgRef.scrollIntoView({ behavior: 'smooth' })
 	}
 
 	addFile = e => {
@@ -160,18 +160,18 @@ class Messages extends Component {
 		})
 	}
 
-	countUsersPosts=messages=>{
-		let usersPosts=messages.reduce((acc,message)=>{
+	countUsersPosts = messages => {
+		let usersPosts = messages.reduce((acc, message) => {
 			if (message.user.name in acc) {
-				acc[message.user.name].count +=1;	
-			}else{
-				acc[message.user.name]={
-					avatar:message.user.avatar,
-					count:1,
+				acc[message.user.name].count += 1;
+			} else {
+				acc[message.user.name] = {
+					avatar: message.user.avatar,
+					count: 1,
 				};
 			}
 			return acc;
-		},{});
+		}, {});
 		this.props.setUserPosts(usersPosts)
 	}
 
@@ -247,35 +247,41 @@ class Messages extends Component {
 		this.setState({ [e.target.name]: e.target.value })
 	}
 
-	tooglePicker=()=>this.setState({emojiPicker:!this.state.emojiPicker})
+	tooglePicker = () => this.setState({ emojiPicker: !this.state.emojiPicker })
 
-	handelAddEmojiToMessage=emoji=>{
-		const oldMessage=this.state.message;
-		const newMessage=this.colonToUnicode(`${oldMessage} ${emoji.colons}`)
-		this.setState({message:newMessage,emojiPicker:false})
+	handelAddEmojiToMessage = emoji => {
+		const oldMessage = this.state.message;
+		const newMessage = this.colonToUnicode(`${oldMessage} ${emoji.colons}`)
+		this.setState({ message: newMessage, emojiPicker: false })
 		setTimeout(() => {
 			this.messageinputRef.focus();
 		}, 10);
 	}
 
-	colonToUnicode=message=>{
+	onKeyDownSendMessage = (e) => {
+		if (e.ctrlKey && e.keyCode === 13){
+			this.sendMessage();
+		}
+	}
+
+	colonToUnicode = message => {
 		return message.replace(/:[A-Za-z0-9_+-]+:/g, x => {
 			x = x.replace(/:/g, "");
 			let emoji = emojiIndex.emojis[x];
 			if (typeof emoji !== "undefined") {
-			  let unicode = emoji.native;
-			  if (typeof unicode !== "undefined") {
-				return unicode;
-			  }
+				let unicode = emoji.native;
+				if (typeof unicode !== "undefined") {
+					return unicode;
+				}
 			}
 			x = ":" + x + ":";
 			return x;
-		  });
+		});
 	}
 
-	focusInput=node=>this.messageinputRef=node
+	focusInput = node => this.messageinputRef = node
 
-	msgEnd=node=>this.msgRef=node
+	msgEnd = node => this.msgRef = node
 
 	displayChannelName = () => this.state.currentChannel ? `${this.state.privateChannel ? '@' : '#'}${this.state.currentChannel.name}` : ''
 	render() {
@@ -295,15 +301,16 @@ class Messages extends Component {
 				handelAddEmojiToMessage={this.handelAddEmojiToMessage}
 				focusInput={this.focusInput}
 				msgEnd={this.msgEnd}
+				onKeyDownSendMessage={this.onKeyDownSendMessage}
 			/>
 		)
 	}
 }
 
-const mapDispatchToProps=dispatch=>{
-	return{
-		setUserPosts:posts=>dispatch(setUsersPosts(posts)),
+const mapDispatchToProps = dispatch => {
+	return {
+		setUserPosts: posts => dispatch(setUsersPosts(posts)),
 	}
 }
 
-export default connect(null,mapDispatchToProps)(Messages);
+export default connect(null, mapDispatchToProps)(Messages);

@@ -18,6 +18,19 @@ body,
 	overflow-y: scroll;
 	margin-bottom: 100px;
 }
+.messages::-webkit-scrollbar {
+	width: .5em;
+  }
+   
+  .messages::-webkit-scrollbar-track {
+	box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+	
+  }
+   
+  .messages::-webkit-scrollbar-thumb {
+	background-color: darkgrey;
+	outline: 1px solid slategrey;
+  }
 
 .messages__form{
 	margin-left: 320px !important;

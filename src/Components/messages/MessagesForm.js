@@ -20,19 +20,20 @@ const MessagesForm = props => {
 				ref={node => props.focusInput(node)}
 				fluid={true}
 				name="message"
+				onKeyDown={props.onKeyDownSendMessage}
 				style={{ marginBottom: '.7em' }}
 				onChange={props.onMessageChange}
 				label={
-				<Button 
-				icon={props.emojiPicker?'close':'add'}
-				content={props.emojiPicker?'Close':null} 
-				onClick={props.tooglePicker} 
-				/>}
+					<Button
+						icon={props.emojiPicker ? 'close' : 'add'}
+						content={props.emojiPicker ? 'Close' : null}
+						onClick={props.tooglePicker}
+					/>}
 				value={props.message}
 				labelPosition="left"
-				placeholder="Write your Message..." 
+				placeholder="Write your Message...   (Ctrl+Enter to send message)"
 				autoComplete="off"
-				type="text"/>
+				type="text" />
 			<Button.Group icon widths="2">
 				<Button
 					onClick={props.sendMessage}
