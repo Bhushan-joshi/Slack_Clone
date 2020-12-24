@@ -42,13 +42,27 @@ class SigninContainer extends Component {
 		}
 		this.setState({ formData: updateForm })
 	}
+
+	signinWithGoogle = () => {
+		const provider = new firebase.auth.GoogleAuthProvider();
+		firebase
+			.auth()
+			.signInWithPopup(provider)
+			.then(user => {
+				this.saveCreatedUser(user)
+			}).catch(err => {
+				console.log(err);
+			})
+	}
+
 	render() {
 		return (
 			<Signin
 				formSubmit={this.onSubmit}
 				loading={this.state.loading}
 				valChange={this.onValChange}
-				error={this.state.error} />
+				error={this.state.error} 
+				signinWithGoogle={this.signinWithGoogle}/>
 		)
 	}
 }

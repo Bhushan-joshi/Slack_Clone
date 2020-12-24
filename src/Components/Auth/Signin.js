@@ -38,6 +38,14 @@ const signin = (props) => {
 						</Button>
 					</Segment>
 				</Form>
+				<Button color="google plus"
+					fluid
+					style={{ marginTop: 20 }}
+					size="large"
+					onClick={props.signinWithGoogle}
+				>
+					<Icon name="google" />continue with Google
+				</Button>
 				<Message style={{ marginTop: 20, background: '#eeeeee' }}>
 					don't  have account?{" "} <Link to="/register">{" "} Register</Link> here!
 				</Message>

@@ -66,7 +66,6 @@ class RegisterContainer extends Component {
 			.auth()
 			.signInWithPopup(provider)
 			.then(user => {
-				console.log(user);
 				this.saveCreatedUser(user)
 			}).catch(err => {
 				console.log(err);
