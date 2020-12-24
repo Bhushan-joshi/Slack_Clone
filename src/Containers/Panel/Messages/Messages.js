@@ -30,7 +30,8 @@ class Messages extends Component {
 		searchResult: [],
 		privateChannel: this.props.isPrivateChannel,
 		privateMessagesRef: firebase.database().ref('PrivateMessages'),
-		emojiPicker: false
+		emojiPicker: false,
+		listners: []
 	}
 
 	messageinputRef = null;
@@ -39,6 +40,29 @@ class Messages extends Component {
 	componentDidUpdate(prevProps, prevState) {
 		if (this.msgRef) {
 			this.scrollToBottom();
+		}
+	}
+
+	componentWillUnmount() {
+		if (this.state.uploadTask !== null) {
+			this.state.uploadTask.cancel();
+			this.setState({ uploadTask: null });
+		}
+		this.removeListners(this.state.listners)
+	}
+	removeListners = (listners) => {
+		listners.forEach(listner => {
+			listner.ref.child(listner.id).off(listner.event)
+		});
+	 }
+
+	addToListners = (id, ref, event) => {
+		const index = this.state.listners.findIndex(listner => (
+			listner.id === id && listner.ref === ref && listner.event === event
+		))
+		if (index===-1) {
+			const newListner={id,ref,event}
+			this.setState({listners:this.state.listners.concat(newListner)})
 		}
 	}
 
@@ -68,7 +92,7 @@ class Messages extends Component {
 
 	getPath = () => {
 		if (this.state.privateChannel) {
-			return `chat/private-${this.state.currentChannel.id}`
+			return `chat/private/${this.state.currentChannel.id}`
 		} else {
 			return 'chat/public'
 		}
@@ -158,6 +182,7 @@ class Messages extends Component {
 			this.countUniqueUsers(loadedMessage);
 			this.countUsersPosts(loadedMessage)
 		})
+		this.addToListners(channelId,ref,'child_added')
 	}
 
 	countUsersPosts = messages => {
@@ -259,7 +284,7 @@ class Messages extends Component {
 	}
 
 	onKeyDownSendMessage = (e) => {
-		if (e.ctrlKey && e.keyCode === 13){
+		if (e.ctrlKey && e.keyCode === 13) {
 			this.sendMessage();
 		}
 	}

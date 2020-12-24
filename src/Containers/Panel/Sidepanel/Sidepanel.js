@@ -40,6 +40,19 @@ class Sidepanel extends Component {
 		this.loadUsers(this.props.user.uid)
 	}
 	
+	componentWillUnmount(){
+		this.removeListners();
+	}
+
+	removeListners=()=>{
+		this.state.channelsRef.off();
+		this.state.channels.forEach(channel=>{
+			this.state.messagesRef.child(channel.id).off()
+		})
+		this.state.usersRef.off();
+		this.state.presenceRef.off();
+		this.state.connectedRef.off();
+	}
 
 	loadUsers = currentUser => {
 		let loadedUser = [];
@@ -262,7 +275,7 @@ class Sidepanel extends Component {
 		}
 		const {storageRef,user,blob}=this.state
 		storageRef
-		.child(`avatars/user-${user.uid}`)
+		.child(`avatars/user/${user.uid}`)
 		.put(blob,metadata)
 		.then(snap=>{
 			snap.ref.getDownloadURL()
