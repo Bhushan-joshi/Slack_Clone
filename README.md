@@ -19,7 +19,7 @@ npm i
 ```
 Step 3: create src/firebase.js file and  Put your firebase credentials in it:
 
-```bash
+```javascript
 import firebase from 'firebase/app';
 import "firebase/auth";
 import "firebase/database";
