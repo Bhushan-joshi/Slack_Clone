@@ -44,7 +44,14 @@ Step 4: spinup your server and hit [localhost](http://127.0.0.1:3000) by:
 ```bash
 npm start
 ```
-
+> Tech stack:
+   * [React](https://reactjs.org/)
+   * [Firebase](https://firebase.google.com/)
+   * [React Router](https://reactrouter.com/)
+   * [Redux](https://redux.js.org/)
+   * [React-Redux](https://react-redux.js.org/)
+   * [semantic-ui-react](https://react.semantic-ui.com/)
+   * [emoji-mart](https://github.com/missive/emoji-mart)
 ---
 ## Here are Images
 
