@@ -53,3 +53,9 @@ npm start
 ![](docs/images/newChannel.png)
 ![](docs/images/search.png)
 ![](docs/images/Emoji.png)
+
+---
+
+## Contribute
+
+You can fork this repo and send me a PR.
