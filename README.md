@@ -53,7 +53,7 @@ npm start
    * [semantic-ui-react](https://react.semantic-ui.com/)
    * [emoji-mart](https://github.com/missive/emoji-mart)
 ---
-## Here are Images
+## Here are some Images
 
 ![](docs/images/mainPage.png)
 ![](docs/images/details.png)
